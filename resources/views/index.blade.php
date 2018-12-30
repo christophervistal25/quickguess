@@ -81,8 +81,8 @@
         <tbody>
           @foreach ($ranks as $rank)
             <tr>
-              <th><h5>{{$rank->username}}</h5></th>
-              <th class="text-center"><h5>{{$rank->points}}</h5></th>
+              <th>{{$rank->username}}</th>
+              <th class="text-center">{{$rank->points}}</th>
             </tr>
           @endforeach
         </tbody>

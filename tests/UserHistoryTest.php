@@ -13,9 +13,6 @@ class UserHistoryTest extends TokenTester
 {
     use UserCredentials;
 
-    // 1. it throws 422 if the user is null
-    // 2. it throws 422 if the prev_user_life is null
-
     /**
      * [it_can_store_user_history description]
      * @test
@@ -27,19 +24,41 @@ class UserHistoryTest extends TokenTester
                      ->getAll();
 
         $response = $this->post('api/userhistory',$data);
+
         $response->assertResponseStatus(201);
         $this->seeJsonStructure(['code']);
     }
 
     /**
-     * [it_fails_if_no_parameters_pass description]
+     * [it_throws_422_if_the_prev_user_life_is_null description]
      * @test
      * @return [type] [description]
      */
-    public function it_throws_a_422_if_validation_fails()
+    public function it_throws_422_if_the_prev_user_life_is_null()
     {
-        $data = $this->getStubForValidation();
+        $data = $this->userHistoryCredentials()
+                     ->withNull('prev_user_life')
+                     ->getAll();
+
         $response = $this->post('api/userhistory',$data);
+
+        $response->assertResponseStatus(422);
+    }
+
+
+    /**
+     * [it_throws_422_if_the_username_is_null description]
+     * @test
+     * @return [type] [description]
+     */
+    public function it_throws_422_if_the_username_is_null()
+    {
+        $data = $this->userHistoryCredentials()
+                     ->withNull('username')
+                     ->getAll();
+
+        $response = $this->post('api/userhistory',$data);
+
         $response->assertResponseStatus(422);
     }
 
@@ -56,6 +75,7 @@ class UserHistoryTest extends TokenTester
                      ->getAll();
 
         $response = $this->post('api/userhistory',$data);
+
         $this->seeStatusCode(422)
              ->seeJsonStructure(['code','message'])
              ->seeJsonEquals([

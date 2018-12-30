@@ -13,29 +13,45 @@ class UserStatTest extends TokenTester
         $data = $this->userStatusCredentials()
                       ->getAll();
 
-
         $this->expectsEvents('App\Events\GetPoints');
 
-        $this->post('api/userstat',$data)
-            ->assertResponseStatus(201);
+        $response = $this->post('api/userstat',$data);
 
+        $response->assertResponseStatus(201);
         $this->seeJsonStructure(['code','message']);
     }
 
-    /*public function it_throws_422_if_user_data_status_is_not_encoded_to_json()
+    /**
+     * [it_throws_422_if_user_data_status_is_not_encoded_to_json description]
+     * @test
+     * @return [type] [description]
+     */
+    public function it_throws_422_if_user_data_status_is_not_encoded_to_json()
     {
+        $data = $this->userStatusCredentials()
+                     ->decodeJsonStatus()
+                     ->getAll();
 
-    }*/
+        $response = $this->post('api/userstat',$data);
+
+        $response->assertResponseStatus(422);
+        $this->seeJsonStructure(['data'])
+            ->seeJsonEquals(['data' => ['The data is not valid.']]);
+    }
 
     /**
      * [it_fails_if_no_parameters_pass description]
      * @test
      * @return [type] [description]
      */
-    public function it_throws_a_422_if_validation_fails()
+    public function it_throws_422_if_username_is_null()
     {
-        $data = $this->getStubForValidation();
+        $data = $this->userStatusCredentials()
+                     ->withNull('username')
+                     ->getAll();
+
         $response = $this->post('api/userstat',$data);
+
         $response->assertResponseStatus(422);
     }
 

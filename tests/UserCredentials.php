@@ -52,6 +52,16 @@ trait UserCredentials
         return $this;
     }
 
+
+    /**
+     * [setTheTokenToExpire description]
+     */
+    public function setTheTokenToExpire()
+    {
+        $this->credentials['token'] = $this->user->jwt($this->user,60);
+        return $this;
+    }
+
     /**
      * [withNull set a null]
      * @param  array  $fields [you can either pass an array or a string]
@@ -92,7 +102,7 @@ trait UserCredentials
 
     public function decodeJsonStatus()
     {
-        $this->credentials['data'] = $this->user_data_status;
+        $this->credentials['data'] = json_decode($this->user_data_status,true);
         return $this;
     }
 
