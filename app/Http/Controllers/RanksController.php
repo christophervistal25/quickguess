@@ -11,8 +11,7 @@ class RanksController extends Controller
     private $ranks;
     public function __construct(Ranks $ranks)
     {
-       // $this->middleware('jwt', ['except' => ['index']]);
-        $this->ranks = $ranks->orderBy('points','DESC')->get();
+       $this->ranks = $ranks->orderBy('points','DESC')->get();
     }
 
     public function ranks()

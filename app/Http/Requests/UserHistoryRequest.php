@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Requests;
 
+use App\Rules\CheckUser;
 use Urameshibr\Requests\FormRequest;
 
 class UserHistoryRequest extends FormRequest
@@ -13,7 +14,7 @@ class UserHistoryRequest extends FormRequest
     public function rules()
     {
         return [
-          'username'       => 'required',
+          'username'       => ['required' , new CheckUser],
           'prev_user_life' => 'required',
           'game_over_time' => 'nullable',
         ];

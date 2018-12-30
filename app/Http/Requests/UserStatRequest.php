@@ -3,6 +3,7 @@ namespace App\Http\Requests;
 
 use Urameshibr\Requests\FormRequest;
 use App\Rules\UserDataValid;
+use App\Rules\CheckUser;
 
 class UserStatRequest extends FormRequest
 {
@@ -14,7 +15,7 @@ class UserStatRequest extends FormRequest
     public function rules()
     {
         return [
-           'username' => 'required',
+           'username' => ['required',new CheckUser],
            'data'     => ['required' , new UserDataValid()]
         ];
     }

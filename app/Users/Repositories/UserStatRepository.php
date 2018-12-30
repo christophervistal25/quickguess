@@ -1,10 +1,12 @@
 <?php
 namespace App\Users\Repositories;
 
-use App\Users\User;
-use App\Users\UserStat;
-use App\Events\GetPoints;
 use App\Users\Repositories\UserRepository;
+use App\Users\Repositories\UserStatRepository;
+use Illuminate\Support\Facades\DB;
+use App\Events\GetPoints;
+use App\Users\UserStat;
+use App\Users\User;
 
 
 class UserStatRepository
@@ -17,20 +19,35 @@ class UserStatRepository
     }
 
     /**
-     * [createUserStat insert new user stat for a user/player]
-     * @return [type] [description]
+     * [addUserStatusForEveryQuestion description]
+     * @param array $user_data [description]
      */
-    public function createUserStat(array $items)
+    public function addUserStatusForEveryQuestion(array $user_data)
     {
-        $user = User::where('name',$items['username'])->first();
-            if (! $user ) {
-                 return response()->json(['code' => 422 , 'message' => 'unauthorized'],422);
-            }
-            $user_status = json_decode(stripslashes($items['data']),true);
-            $status = $this->model->checkBeforeInsert($user_status,$user->id);
-            $user->stat()->saveMany($status);
-            \Event::fire( new GetPoints($user->id,$user->name));
+       $data = json_decode($user_data['data'],true);
+         try {
+            DB::beginTransaction();
+                $user = $this->userRepository
+                            ->findUserByName($user_data['username']);
+                $insertedStatus = $this->insertStatus($user->id,$data);
+                $this->attachTheStatusToAUser($insertedStatus,$user);
+                \Event::fire( new GetPoints($user->id,$user->name));
+            DB::commit();
             return response()->json(['code' => 201 , 'message' => 'authorized'],201);
+        } catch (\PDOException $e) {
+            DB::rollBack();
+        }
+
+    }
+
+    private function insertStatus(int $user_id , array $user_data)
+    {
+        return $this->model->checkBeforeInsert($user_data, $user_id);
+    }
+
+    private function attachTheStatusToAUser($insertedStatus ,User $user)
+    {
+        return $user->stat()->saveMany($insertedStatus);
     }
 
 

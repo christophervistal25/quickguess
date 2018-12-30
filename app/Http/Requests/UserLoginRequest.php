@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Requests;
 
+use App\Rules\CheckUser;
 use Urameshibr\Requests\FormRequest;
 
 class UserLoginRequest extends FormRequest
@@ -13,7 +14,7 @@ class UserLoginRequest extends FormRequest
     public function rules()
     {
         return [
-          'username' => 'required',
+          'username' => ['required', new CheckUser],
           'password' => 'required',
         ];
     }

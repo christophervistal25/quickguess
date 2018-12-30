@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\GetPoints;
 use App\Http\Requests\UserStatRequest;
-use App\Users\Repositories\UserRepository;
 use App\Users\Repositories\UserStatRepository;
-use App\Users\User;
 use App\Users\UserStat;
-use Exception;
 use Illuminate\Http\Request;
 
 class UserStatusController extends Controller
@@ -16,10 +12,9 @@ class UserStatusController extends Controller
 
     protected $userRepo;
     protected $user_stat;
-    public function __construct(UserStatRepository $user_repo, UserStat $user_stat)
+    public function __construct(UserStatRepository $userStatRepository)
     {
-        $this->userStatRepo = $user_repo;
-        $this->user_stat = $user_stat;
+        $this->userStatRepository = $userStatRepository;
     }
    	 /**
      * Display a listing of the resource.
@@ -39,7 +34,8 @@ class UserStatusController extends Controller
      */
     public function store(UserStatRequest $request)
     {
-        return $this->userStatRepo->createUserStat($request->all());
+        return $this->userStatRepository
+                    ->addUserStatusForEveryQuestion($request->all());
     }
 
 

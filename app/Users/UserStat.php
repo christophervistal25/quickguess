@@ -22,6 +22,7 @@ class UserStat extends Model
         return $this->belongsTo(User::class,'id');
     }
 
+
     public function checkBeforeInsert(array $data , int $user_id)
     {
         foreach ($data as $items) {

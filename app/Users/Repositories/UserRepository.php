@@ -1,14 +1,14 @@
 <?php
 namespace App\Users\Repositories;
 
-use App\Users\Exceptions\CreateUserErrorException;
 use App\Users\Repositories\UserStatRepository;
 use App\Users\User;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Hash;
+use App\Response\UserResponse;
 
 class UserRepository
 {
+    use UserResponse;
     /**
      * [__construct description]
      * @param User $user [description]
@@ -25,16 +25,12 @@ class UserRepository
      */
     public function createUser(array $data) : User
     {
-        try {
-            return $this->model->create(
+        return $this->model->create(
                 [
-                    'name' => $data['username'],
+                    'name'     => $data['username'],
                     'password' => $data['password']
                 ]
             );
-        } catch (QueryException $e) {
-            throw new CreateUserErrorException($e);
-        }
     }
 
     /**
@@ -44,11 +40,7 @@ class UserRepository
      */
     public function findUser(int $id) : User
     {
-        try {
-            return $this->model->findOrFail($id);
-        } catch (QueryException $e) {
-            throw new CreateUserErrorException($e);
-        }
+       return $this->model->findOrFail($id);
     }
 
     /**
@@ -58,22 +50,19 @@ class UserRepository
      */
     public function findUserByName(string $username) : User
     {
-        try {
-            return $this->model->where('name',$username)->first();
-        } catch (QueryException $e) {
-            throw new CreateUserErrorException($e);
-        }
+        return $this->model->where('name',$username)->first();
     }
 
+    /**
+     * [findUserStat description]
+     * @param  string $username [description]
+     * @return [type]           [description]
+     */
     public function findUserStat(string $username) : User
     {
-           try {
-           return $this->model->where('name',$username)
-                        ->with(['stat','user_history'])
-                        ->first();
-        } catch (QueryException $e) {
-            throw new CreateUserErrorException($e);
-        }
+        return $this->model->where('name',$username)
+                    ->with(['stat','user_history'])
+                    ->first();
     }
 
     /**
@@ -83,32 +72,25 @@ class UserRepository
      */
     public function login(array $data)
     {
-        $user = $this->model->where('name',$data['username'])->first();
-        if (isset($user) && Hash::check($data['password'],$user->password)) {
-            return response()->json(
-                [
-                    'success' => true,
-                    'id' => $user->id ,
-                    'name' => $user->name,
-                    'token' => $this->model->jwt($user) ,
-                    'stat' => $user->stat,
-                    'user_history' => $user->user_history
-                ],200);
+        $player = $this->findUserByName($data['username']);
+        if (isset($player) && Hash::check($data['password'],$player->password)) {
+            return $this->respondUserSuccessfullyLogin($player);
         }
-        return response()->json(['success' => false],422);
+        return $this->respondUserFailedToLogin();
     }
 
+    /**
+     * [register description]
+     * @param  array  $data [description]
+     * @return [type]       [description]
+     */
     public function register(array $data)
     {
-        $new_user = $this->createUser($data);
-        if ($new_user) {
-            return response()->json([
-                'success' => true,
-                'id' => $new_user->id,
-                'token' => $this->model->jwt($new_user)
-            ],201);
-        }
+        return $this->respondUserSuccessfullyRegister($this->createUser($data));
     }
+
+
 
 
 }
+

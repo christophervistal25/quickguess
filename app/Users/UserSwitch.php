@@ -16,13 +16,6 @@ class UserSwitch extends Model
         return $this->belongsTo(User::class,'user_id','id');
     }
 
-    public function addUserHistory($user , Request $request)
-    {
-        return $this->updateOrCreate(['user_id' => $user->id],
-            [
-                 'user_id' => $user->id,
-                 'prev_user_life' => $request->prev_user_life,
-                 'game_over_time' => $request->game_over_time,
-            ]);
-    }
+
+
 }

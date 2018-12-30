@@ -26,6 +26,7 @@ class UserHistoryTest extends TokenTester
         $response = $this->post('api/userhistory',$data);
 
         $response->assertResponseStatus(201);
+
         $this->seeJsonStructure(['code']);
     }
 
@@ -77,11 +78,8 @@ class UserHistoryTest extends TokenTester
         $response = $this->post('api/userhistory',$data);
 
         $this->seeStatusCode(422)
-             ->seeJsonStructure(['code','message'])
-             ->seeJsonEquals([
-                'code' => 422,
-                'message' => 'user not exists.'
-            ]);
+             ->seeJsonStructure(['username'])
+             ->seeJsonEquals(['username' => ['the user is unauthorized.']]);
     }
 
 }

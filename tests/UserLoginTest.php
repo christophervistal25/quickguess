@@ -8,7 +8,7 @@ class UserLoginTest extends UserValidationTest
         $data = $this->credentials()
                      ->getAll();
         $this->post('api/login',$data)
-            ->assertResponseStatus(200);
+             ->assertResponseStatus(200);
         $this->seeJsonStructure(['success','id','name','token','stat','user_history']);
     }
 
@@ -26,7 +26,7 @@ class UserLoginTest extends UserValidationTest
         $this->notSeeInDatabase('users',['name' => $this->credentials['username']]);
 
         $this->post('api/login',$data)
-              ->assertResponseStatus(422);
+             ->assertResponseStatus(422);
     }
 
        /**
