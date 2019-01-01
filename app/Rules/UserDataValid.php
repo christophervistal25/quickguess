@@ -15,10 +15,12 @@ class UserDataValid implements Rule
     {
         if (is_array($value)) {
             return false;
+        } else if($value == "[{}]") {
+            return false;
         } else {
             $json = json_decode($value,true);
         }
-        return $json && $value != $json;
+        return ($json && $value != $json);
     }
 
      /**

@@ -16,12 +16,14 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
-        return $this->userRepository->register($request->all());
+        return $this->userRepository
+                    ->register($request->all());
     }
 
     public function loginUser(UserLoginRequest $request)
     {
-        return $this->userRepository->login($request->all());
+        return $this->userRepository
+                    ->login($request->all());
     }
 
 

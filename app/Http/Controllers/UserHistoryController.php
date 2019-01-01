@@ -16,6 +16,7 @@ class UserHistoryController extends Controller
 
    	 public function store(UserHistoryRequest $request)
      {
-        return $this->userHistoryRepository->addUserHistory($request->all());
+        return $this->userHistoryRepository
+                    ->addUserHistory($request->all());
      }
 }

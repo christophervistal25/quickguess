@@ -15,7 +15,7 @@ class UserStatRequest extends FormRequest
     public function rules()
     {
         return [
-           'username' => ['required',new CheckUser],
+           'username' => ['required',new CheckUser()],
            'data'     => ['required' , new UserDataValid()]
         ];
     }
